@@ -185,16 +185,16 @@ body {
   position: relative; /* Needed for absolute positioning of theme switch */
 }
 
-/* Container for top controls (Back Button, Theme Switch) */
+/* Container for top controls (Back Button) */
 .top-controls {
   display: flex;
-  justify-content: space-between; /* Pushes items to opposite ends */
+  justify-content: flex-start; /* Align back button to the left */
   align-items: center;
-  margin-bottom: 15px; /* Space below controls */
+  /* Removed margin-bottom as it's less relevant now */
   position: absolute; /* Position relative to #container */
   top: 15px; /* Align with container padding */
   left: 20px;
-  right: 20px;
+  right: 20px; /* Still use right for width constraint if needed */
 }
 
 /* Back Button Style */
@@ -216,10 +216,14 @@ body {
   box-shadow: none;
 }
 
-/* Adjust theme switch position as it's now inside .top-controls */
+/* Global Theme Switch Positioning */
 .theme-switch-wrapper {
-  position: static; /* Remove absolute positioning */
-  /* display: flex; align-items: center; are already there */
+  position: fixed; /* Fixed position relative to viewport */
+  top: 20px;       /* Distance from top */
+  right: 30px;      /* Distance from right */
+  display: flex;
+  align-items: center;
+  z-index: 1000; /* Ensure it stays on top */
 }
 
 .theme-switch-wrapper span {
@@ -396,3 +400,186 @@ button:hover {
 #clear-button:hover {
   background-color: var(--clear-hover-bg);
 }
+
+/* Options Page Styling */
+#options-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--container-bg);
+  padding: 40px 50px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px var(--container-shadow);
+  max-width: 500px;
+  width: 90%;
+  color: var(--text-color);
+  text-align: center;
+}
+
+#options-page h2 {
+  font-size: 2em;
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: var(--title-color);
+}
+
+.options-group {
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.options-group label {
+  display: block;
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.grid-options {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.grid-option-btn {
+  font-family: var(--font-family);
+  padding: 10px 20px;
+  font-size: 1em;
+  border: 2px solid transparent; /* Base border */
+  background-color: rgba(255, 255, 255, 0.2); /* Slightly visible background */
+  color: var(--text-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+
+.grid-option-btn.selected {
+  background-color: var(--solve-bg); /* Use theme color */
+  border-color: var(--text-color); /* Highlight border */
+  color: white;
+  font-weight: 700;
+}
+
+.grid-option-btn:not(.selected):hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.grid-option-btn:active {
+    transform: scale(0.95); /* Click feedback */
+}
+
+/* Navigation buttons on options page */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between; /* Space out Back and Start */
+    width: 100%;
+    margin-top: 20px;
+}
+
+.nav-btn {
+    flex-basis: 48%; /* Roughly half width each, adjusted for gap */
+}
+
+/* Sudoku Table Container */
+#sudoku-board-container {
+    margin-bottom: 30px; /* Add margin below board */
+}
+
+/* Sudoku Table - General */
+table#sudoku-board {
+  border-collapse: collapse;
+  /* font-size will be set based on grid size if needed */
+  margin: 0 auto; /* Center table */
+  background-color: var(--table-bg);
+  color: var(--table-text);
+  border: 3px solid var(--table-border);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Table cell styling - General */
+td {
+  border: 1px solid var(--table-cell-border);
+  /* height/width might need adjustment based on size */
+  height: 1.6em; 
+  width: 1.6em;
+  min-width: 30px; /* Minimum size */
+  min-height: 30px;
+  text-align: center;
+  padding: 0;
+  vertical-align: middle;
+  font-weight: 700;
+  cursor: text;
+  transition: background-color 0.2s ease, border-color 0.3s ease;
+  font-size: 1.2em; /* Base font size for cells */
+  /* Adjust font size for smaller grids */
+  .grid-size-4 & { font-size: 1.5em; height: 1.8em; width: 1.8em; }
+  .grid-size-6 & { font-size: 1.4em; height: 1.7em; width: 1.7em; }
+}
+
+/* Style for focused/edited cells */
+td:focus {
+  background-color: var(--table-cell-focus-bg);
+  outline: none;
+}
+
+/* Thicker borders for blocks - Dynamic approach */
+/* Assumes grid-size-N class is on table */
+
+/* 9x9 (3x3 blocks) */
+.grid-size-9 col:nth-child(3n),
+.grid-size-9 tr:nth-child(3n) td {
+  border-right-width: 3px;
+  border-right-color: var(--table-border);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--table-border);
+}
+.grid-size-9 tr:last-child td {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--table-cell-border);
+}
+.grid-size-9 td:last-child {
+  border-right-width: 1px;
+  border-right-color: var(--table-cell-border);
+}
+.grid-size-9 col:nth-child(3n) { border-right: 3px solid var(--table-border); }
+.grid-size-9 tr:nth-child(3n) { border-bottom: 3px solid var(--table-border); }
+
+/* 6x6 (3x2 blocks) */
+.grid-size-6 col:nth-child(3n),
+.grid-size-6 tr:nth-child(2n) td {
+  border-right-width: 3px;
+  border-right-color: var(--table-border);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--table-border);
+}
+.grid-size-6 tr:last-child td {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--table-cell-border);
+}
+.grid-size-6 td:last-child {
+  border-right-width: 1px;
+  border-right-color: var(--table-cell-border);
+}
+.grid-size-6 col:nth-child(3n) { border-right: 3px solid var(--table-border); }
+.grid-size-6 tr:nth-child(2n) { border-bottom: 3px solid var(--table-border); }
+
+/* 4x4 (2x2 blocks) */
+.grid-size-4 col:nth-child(2n),
+.grid-size-4 tr:nth-child(2n) td {
+  border-right-width: 3px;
+  border-right-color: var(--table-border);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--table-border);
+}
+.grid-size-4 tr:last-child td {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--table-cell-border);
+}
+.grid-size-4 td:last-child {
+  border-right-width: 1px;
+  border-right-color: var(--table-cell-border);
+}
+.grid-size-4 col:nth-child(2n) { border-right: 3px solid var(--table-border); }
+.grid-size-4 tr:nth-child(2n) { border-bottom: 3px solid var(--table-border); }

@@ -17,43 +17,54 @@
   <div id="stars2"></div>
   <div id="stars3"></div>
 
+  <!-- Theme Toggle Switch (Global) -->
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch" for="theme-checkbox">
+        <input type="checkbox" id="theme-checkbox" />
+        <div class="slider round"></div>
+    </label>
+    <span>Dark Mode</span>
+  </div>
+
+  <!-- Landing Page Section -->
   <div id="landing-page">
     <h1>Sudoku Solver</h1>
     <button id="play-button" class="play-btn">Play Game</button>
   </div>
 
-  <div id="container" class="hidden">
+  <!-- Options Page Section (initially hidden) -->
+  <div id="options-page" class="hidden">
+    <h2>Setup Your Game</h2>
     
-    <div class="top-controls">
-      <!-- Back to Home Button -->
-      <button id="back-home-button" class="back-btn">&larr; Home</button>
-      <!-- Theme Toggle Switch -->
-      <div class="theme-switch-wrapper">
-        <label class="theme-switch" for="theme-checkbox">
-            <input type="checkbox" id="theme-checkbox" />
-            <div class="slider round"></div>
-        </label>
-        <span>Dark Mode</span>
+    <div class="options-group">
+      <label>Select Grid Size:</label>
+      <div class="grid-options">
+        <button class="grid-option-btn" data-size="4">4 x 4</button>
+        <button class="grid-option-btn" data-size="6">6 x 6</button>
+        <button class="grid-option-btn selected" data-size="9">9 x 9</button> <!-- Default selected -->
       </div>
     </div>
 
+    <!-- Add other options like style selection here later if needed -->
+
+    <div class="navigation-buttons">
+        <button id="back-to-landing-button" class="nav-btn back-btn">&larr; Back</button>
+        <button id="start-game-button" class="nav-btn play-btn">Start Game</button>
+    </div>
+  </div>
+
+  <!-- Main Game Container (initially hidden) -->
+  <div id="container" class="hidden"> 
+    <div class="top-controls">
+      <!-- Back to Options Button -->
+      <button id="back-to-options-button" class="back-btn">&larr; Back to Setup</button> 
+    </div>
+
     <h1><em>Sudoku Solver</em></h1>
-    <table id="sudoku-board">
-      <colgroup><col><col><col></colgroup>
-      <colgroup><col><col><col></colgroup>
-      <colgroup><col><col><col></colgroup>
-      <tbody>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-        <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
-      </tbody>
-    </table>
+    <!-- Sudoku board will be generated here by JS -->
+    <div id="sudoku-board-container">
+        <table id="sudoku-board"></table>
+    </div>
     <div class="button-container">
       <button id="solve-button">Solve!</button>
       <button id="clear-button">Clear board</button>
@@ -61,23 +72,56 @@
   </div>
 
   <script type="text/javascript">
+    // --- Global state ---
+    let currentGridSize = 9; // Default grid size
+
+    // --- Element References ---
     const landingPage = document.getElementById('landing-page');
+    const optionsPage = document.getElementById('options-page'); // New options page
     const gameContainer = document.getElementById('container');
     const playButton = document.getElementById('play-button');
-    const backHomeButton = document.getElementById('back-home-button');
+    const backToLandingButton = document.getElementById('back-to-landing-button'); // New back button
+    const startGameButton = document.getElementById('start-game-button'); // New start button
+    const backToOptionsButton = document.getElementById('back-to-options-button'); // Renamed back button
+    const themeToggle = document.getElementById('theme-checkbox');
+    const sudokuBoardElement = document.getElementById('sudoku-board'); // Reference to the table
+    const gridOptionButtons = document.querySelectorAll('.grid-option-btn');
 
+    // --- Navigation Logic ---
     playButton.addEventListener('click', () => {
       landingPage.classList.add('hidden');
-      gameContainer.classList.remove('hidden');
+      optionsPage.classList.remove('hidden'); // Show options page
+      gameContainer.classList.add('hidden'); 
     });
 
-    backHomeButton.addEventListener('click', () => {
+    backToLandingButton.addEventListener('click', () => {
+        optionsPage.classList.add('hidden');
+        landingPage.classList.remove('hidden');
+    });
+
+    startGameButton.addEventListener('click', () => {
+        // Grid size is already stored in currentGridSize via grid option listeners
+        generateSudokuGrid(currentGridSize); // Generate the grid
+        optionsPage.classList.add('hidden');
+        gameContainer.classList.remove('hidden'); // Show game container
+    });
+
+    backToOptionsButton.addEventListener('click', () => {
       gameContainer.classList.add('hidden');
-      landingPage.classList.remove('hidden');
-      clearBoard();
+      optionsPage.classList.remove('hidden'); // Show options page
+      // clearBoard(); // Optionally clear board when going back to options
     });
 
-    const themeToggle = document.getElementById('theme-checkbox');
+    // --- Grid Size Selection Logic ---
+    gridOptionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            gridOptionButtons.forEach(btn => btn.classList.remove('selected')); // Deselect all
+            button.classList.add('selected'); // Select clicked one
+            currentGridSize = parseInt(button.getAttribute('data-size')); // Update global size
+        });
+    });
+
+    // --- Theme Switch Logic (no changes needed here) ---
     const currentTheme = localStorage.getItem('theme');
 
     if (currentTheme === 'dark') {
@@ -95,11 +139,168 @@
       }
     });
 
-    document.getElementById("sudoku-board").addEventListener("keyup", function(event) {
+    // --- New Sudoku Solving Logic (Replaces external SudokuSolver) ---
+
+    // Helper to parse the board string into a 2D array (0 for empty)
+    function parseBoard(boardString, size) {
+        const board = [];
+        let k = 0;
+        for (let i = 0; i < size; i++) {
+            const row = [];
+            for (let j = 0; j < size; j++) {
+                const char = boardString[k++];
+                const num = parseInt(char);
+                row.push(isNaN(num) ? 0 : num); // Use 0 for '-' or invalid
+            }
+            board.push(row);
+        }
+        return board;
+    }
+
+    // Helper to convert the solved 2D array back to a string
+    function boardToStringFromMatrix(board, size) {
+        let boardString = "";
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                boardString += board[i][j] === 0 ? "-" : board[i][j].toString();
+            }
+        }
+        return boardString;
+    }
+
+    // Helper to find the next empty cell (returns [row, col] or null)
+    function findEmpty(board, size) {
+        for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+                if (board[r][c] === 0) {
+                    return [r, c];
+                }
+            }
+        }
+        return null; // No empty cells
+    }
+
+    // Helper to check if placing a number is valid
+    function isValid(board, row, col, num, size) {
+        // Check row
+        for (let c = 0; c < size; c++) {
+            if (board[row][c] === num && c !== col) {
+                return false;
+            }
+        }
+
+        // Check column
+        for (let r = 0; r < size; r++) {
+            if (board[r][col] === num && r !== row) {
+                return false;
+            }
+        }
+
+        // Check block/subgrid
+        const blockRows = size === 6 ? 2 : Math.sqrt(size);
+        const blockCols = size === 6 ? 3 : Math.sqrt(size);
+        const startRow = Math.floor(row / blockRows) * blockRows;
+        const startCol = Math.floor(col / blockCols) * blockCols;
+
+        for (let r = 0; r < blockRows; r++) {
+            for (let c = 0; c < blockCols; c++) {
+                if (board[startRow + r][startCol + c] === num && (startRow + r !== row || startCol + c !== col)) {
+                    return false;
+                }
+            }
+        }
+
+        return true; // It's valid
+    }
+
+    // The recursive backtracking solver function
+    function solveInternal(board, size) {
+        const emptyPos = findEmpty(board, size);
+        if (!emptyPos) {
+            return true; // Board is full and assumed valid
+        }
+        const [row, col] = emptyPos;
+
+        for (let num = 1; num <= size; num++) {
+            if (isValid(board, row, col, num, size)) {
+                board[row][col] = num; // Try placing number
+
+                if (solveInternal(board, size)) {
+                    return true; // Found solution
+                }
+
+                board[row][col] = 0; // Backtrack
+            }
+        }
+
+        return false; // No valid number found for this cell
+    }
+
+    // Main function to orchestrate solving
+    function solveSudokuInternal(boardString, size) {
+        const board = parseBoard(boardString, size);
+        
+        // Pre-check: Ensure the initial board is valid
+        for(let r=0; r<size; r++) {
+            for(let c=0; c<size; c++) {
+                if(board[r][c] !== 0 && !isValid(board, r, c, board[r][c], size)) {
+                    console.error(`Initial board invalid at [${r},${c}] with value ${board[r][c]}`);
+                    return null; // Initial board is invalid
+                }
+            }
+        }
+
+        if (solveInternal(board, size)) {
+            return boardToStringFromMatrix(board, size);
+        } else {
+            return null; // No solution exists
+        }
+    }
+
+    // --- Dynamic Grid Generation ---
+    function generateSudokuGrid(size) {
+        sudokuBoardElement.innerHTML = ''; // Clear previous grid
+        sudokuBoardElement.className = `grid-size-${size}`; // Add class for styling
+
+        const blockSize = Math.sqrt(size); // Assumes perfect square for blocks (4->2, 9->3)
+                                          // Needs adjustment for 6x6 (e.g., 3x2 blocks)
+        let blockRows = size === 6 ? 2 : blockSize;
+        let blockCols = size === 6 ? 3 : blockSize;
+
+        // Create column groups (for block borders)
+        for (let i = 0; i < blockRows; i++) {
+            const colgroup = document.createElement('colgroup');
+            for(let j = 0; j < blockCols; j++) {
+                colgroup.appendChild(document.createElement('col'));
+            }
+            sudokuBoardElement.appendChild(colgroup);
+        }
+
+        // Create table body and rows/cells
+        const tbody = document.createElement('tbody');
+        for (let i = 0; i < size; i++) {
+            const tr = document.createElement('tr');
+            for (let j = 0; j < size; j++) {
+                const td = document.createElement('td');
+                td.contentEditable = true;
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        }
+        sudokuBoardElement.appendChild(tbody);
+    }
+
+    // --- Sudoku Board Logic (Using internal solver now) ---
+    // Add keyup listener dynamically after grid generation or use event delegation
+    document.getElementById("sudoku-board-container").addEventListener("keyup", function(event) {
       if(event.target && event.target.nodeName == "TD") {
-        var validNum = /[1-9]/;
-        var tdEl = event.target;
-        if (tdEl.innerText.length > 0 && validNum.test(tdEl.innerText[0])) {
+        const tdEl = event.target;
+        const size = currentGridSize; // Use current size
+        // Basic validation (1-9 for 9x9, 1-6 for 6x6, 1-4 for 4x4)
+        // More complex validation (e.g., hex for 16x16) would need more logic
+        const validNumRegex = new RegExp(`^[1-${size}]$`); 
+
+        if (tdEl.innerText.length > 0 && validNumRegex.test(tdEl.innerText[0])) {
           tdEl.innerText = tdEl.innerText[0];
         } else {
           tdEl.innerText = "";
@@ -109,49 +310,68 @@
 
     document.getElementById("solve-button").addEventListener("click", function(event) {
       var boardString = boardToString();
-      var solution = SudokuSolver.solve(boardString);
+      if (!boardString) {
+          alert("Board is empty or not generated yet.");
+          return;
+      }
+
+      console.log(`Attempting to solve ${currentGridSize}x${currentGridSize} board:`, boardString);
+      
+      // Use the internal solver
+      var solution = solveSudokuInternal(boardString, currentGridSize); 
+      
       if (solution) {
+        console.log("Solution found:", solution);
         stringToBoard(solution);
       } else {
-        alert("Invalid board!");
+        console.log("No solution found or initial board invalid.");
+        alert("Could not solve the puzzle. Check the initial numbers or ensure a solution exists."); 
       }
     });
 
     document.getElementById("clear-button").addEventListener("click", clearBoard);
 
     function clearBoard() {
-      var tds = document.querySelectorAll("#sudoku-board td");
-      for (var i = 0; i < tds.length; i++) {
-        tds[i].innerText = "";
-      }
+      // Use currentGridSize if needed, but selector works for any size
+      var tds = sudokuBoardElement.querySelectorAll("td"); 
+      tds.forEach(td => td.innerText = "");
     }
 
     function boardToString() {
       var string = "";
-      var validNum = /[1-9]/;
-      var tds = document.querySelectorAll("#sudoku-board td");
+      const size = currentGridSize;
+      const validNumRegex = new RegExp(`^[1-${size}]$`);
+      var tds = sudokuBoardElement.querySelectorAll("td");
+      if (tds.length !== size * size) return ""; // Check if board is generated
+      
       for (var i = 0; i < tds.length; i++) {
-        if (validNum.test(tds[i].innerText[0])) {
-          string += tds[i].innerText[0];
+        let text = tds[i].innerText.trim();
+        if (text.length === 1 && validNumRegex.test(text)) {
+          string += text;
         } else {
-          string += "-";
+          string += "-"; // Use '-' for empty/invalid cells
         }
       }
       return string;
     }
 
     function stringToBoard(string) {
-      var currentCell;
-      var validNum = /[1-9]/;
+      const size = currentGridSize;
+      const validNumRegex = new RegExp(`^[1-${size}]$`);
       var cells = string.split("");
-      var tds = document.querySelectorAll("#sudoku-board td");
-      if (cells.length !== tds.length) return;
+      var tds = sudokuBoardElement.querySelectorAll("td");
+      
+      if (cells.length !== size * size || tds.length !== size * size) {
+          console.error("String length or board size mismatch.");
+          return; // Mismatch
+      } 
+
       for (var i = 0; i < tds.length; i++) {
         currentCell = cells[i];
-        if (validNum.test(currentCell)) {
+        if (validNumRegex.test(currentCell)) {
           tds[i].innerText = currentCell;
         } else {
-          tds[i].innerText = "";
+          tds[i].innerText = ""; // Clear if not valid for the size
         }
       }
     }
