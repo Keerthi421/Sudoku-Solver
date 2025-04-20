@@ -1,54 +1,398 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+/* CSS Variables */
+:root {
+  /* Light Theme (Will still be darkish for space theme) */
+  --font-family: 'Nunito', sans-serif;
+  /* Dark Space Gradient */
+  --bg-color-1: #000428; /* Deep Blue */
+  --bg-color-2: #004e92; /* Lighter Blue */
+  --bg-color-3: #000428; /* Dark Slate Blue */
+  --bg-size: cover; /* Static background */
+
+  --text-color: #f0f0f0; /* Lighter text for dark background */
+  --container-bg: rgba(255, 255, 255, 0.1); /* Light translucent */
+  --container-shadow: rgba(255, 255, 255, 0.15);
+  --title-color: #fff;
+  --table-bg: #424242; /* Dark gray table */
+  --table-text: #f5f5f5; /* Light table text */
+  --table-border: #9e9e9e;
+  --table-cell-border: #757575;
+  --table-cell-focus-bg: #616161;
+  --button-shadow: rgba(255, 255, 255, 0.1);
+  --button-hover-shadow: rgba(255, 255, 255, 0.2);
+  --solve-bg: #66bb6a;
+  --solve-hover-bg: #81c784;
+  --clear-bg: #ef5350;
+  --clear-hover-bg: #e57373;
+  --switch-bg: #555;
+  --switch-slider: #ccc;
+  --switch-checked-bg: #66bb6a;
+}
+
+body.dark-theme {
+  /* Dark Theme */
+  /* Very Dark Space Gradient */
+  --bg-color-1: #0f0c29; /* Dark Purple/Blue */
+  --bg-color-2: #302b63; /* Medium Purple/Blue */
+  --bg-color-3: #24243e; /* Dark Slate Blue */
+  --text-color: #e0e0e0;
+  --container-bg: rgba(0, 0, 0, 0.4); /* Darker translucent */
+  --container-shadow: rgba(0, 0, 0, 0.5);
+  --title-color: #f5f5f5;
+  --table-bg: #303030; /* Very dark gray */
+  --table-text: #f5f5f5;
+  --table-border: #757575; /* Medium gray */
+  --table-cell-border: #555;
+  --table-cell-focus-bg: #424242;
+  --button-shadow: rgba(0, 0, 0, 0.3);
+  --button-hover-shadow: rgba(0, 0, 0, 0.4);
+  --solve-bg: #5c9a5f;
+  --solve-hover-bg: #6abf6e;
+  --clear-bg: #d32f2f;
+  --clear-hover-bg: #e57373;
+  --switch-bg: #424242;
+  --switch-slider: #bdbdbd;
+  --switch-checked-bg: #5c9a5f; /* Match solve button dark */
+}
+
+/* Base styles */
 body {
-  font-family: Calibri, sans-serif;
-  background-color: #f0f0f0;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Updated Space Background */
+  background: linear-gradient(to bottom, var(--bg-color-1, #000428), var(--bg-color-2, #004e92), var(--bg-color-3, #000428)); /* Added fallback, use 3 stops for dark */
+  background-size: var(--bg-size, cover); /* Use variable, default to cover */
+  background-attachment: fixed; /* Keep background fixed during scroll */
+  overflow: hidden; /* Hide overflow to prevent scrollbars from stars */
+  position: relative; /* Needed for pseudo-elements */
+  transition: background 0.5s ease; 
 }
 
-.container {
-  max-width: 800px;
-  margin: 40px auto;
+/* Remove previous gradient animation */
+/* @keyframes gradientBG { ... } */
+
+/* Starfield Background */
+/* Function to generate random box-shadows for stars */
+/* We can't use functions directly in CSS, so this is conceptual. */
+/* We will generate a long box-shadow list manually or with a preprocessor. */
+/* For demonstration, let's create a few stars */
+
+@function multiple-box-shadow ($n) {
+  $value: '#{random(2000)}px #{random(2000)}px #FFF';
+  @for $i from 2 through $n {
+    $value: '#{$value} , #{random(2000)}px #{random(2000)}px #FFF';
+  }
+  @return unquote($value);
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
+/* Create three layers of stars with different sizes and animation durations */
+#stars1, #stars2, #stars3 {
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none; /* Stars should not interfere with clicks */
+}
+
+#stars1 {
+  box-shadow: /* Many stars */; /* Placeholder - Requires generated list */
+  animation: animStar 50s linear infinite;
+}
+
+#stars2 {
+  width: 2px;
+  height: 2px;
+   box-shadow: /* Many stars */; /* Placeholder - Requires generated list */
+  animation: animStar 100s linear infinite;
+}
+
+#stars3 {
+  width: 3px;
+  height: 3px;
+   box-shadow: /* Many stars */; /* Placeholder - Requires generated list */
+  animation: animStar 150s linear infinite;
+}
+
+/* We need to add the star divs to the HTML */
+
+
+/* Landing Page */
+#landing-page {
   text-align: center;
+  color: var(--title-color); /* Use title color for consistency */
 }
 
-.logo {
-  height: 100px;
-  width: 400px;
-  margin-bottom: 20px;
+#landing-page h1 {
+  font-size: 3.5em;
+  margin-bottom: 40px;
 }
 
-.title {
-  font-size: 36px;
-  margin-bottom: 20px;
+.play-btn {
+  font-family: var(--font-family);
+  font-size: 1.5em; 
+  font-weight: 700;
+  padding: 15px 35px; 
+  border: none;
+  border-radius: 50px; /* Pill shape */
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 5px 15px var(--button-shadow);
+  background-color: var(--solve-bg); /* Use solve color */
+  color: white;
 }
 
+.play-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px var(--button-hover-shadow); 
+  background-color: var(--solve-hover-bg); 
+}
+
+/* Utility to hide elements */
+.hidden {
+  display: none !important; /* Use important to override other display properties if necessary */
+}
+
+/* Container for the game content */
+#container {
+  text-align: center;
+  background-color: var(--container-bg);
+  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px var(--container-shadow);
+  max-width: 500px;
+  width: 90%;
+  position: relative; /* Needed for absolute positioning of theme switch */
+}
+
+/* Container for top controls (Back Button, Theme Switch) */
+.top-controls {
+  display: flex;
+  justify-content: space-between; /* Pushes items to opposite ends */
+  align-items: center;
+  margin-bottom: 15px; /* Space below controls */
+  position: absolute; /* Position relative to #container */
+  top: 15px; /* Align with container padding */
+  left: 20px;
+  right: 20px;
+}
+
+/* Back Button Style */
+.back-btn {
+  background: none;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Subtle hover */
+  /* Reset transform from general button hover if it was applied */
+  transform: none; 
+  box-shadow: none;
+}
+
+/* Adjust theme switch position as it's now inside .top-controls */
+.theme-switch-wrapper {
+  position: static; /* Remove absolute positioning */
+  /* display: flex; align-items: center; are already there */
+}
+
+.theme-switch-wrapper span {
+  margin-left: 10px;
+  font-size: 0.8em;
+  color: var(--text-color);
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 24px; /* Adjusted height */
+  position: relative;
+  width: 50px; /* Adjusted width */
+}
+
+.theme-switch input { display: none; }
+
+.slider {
+  background-color: var(--switch-bg);
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+}
+
+.slider:before {
+  background-color: var(--switch-slider);
+  bottom: 4px;
+  content: "";
+  height: 16px; /* Adjusted size */
+  left: 4px;
+  position: absolute;
+  transition: .4s;
+  width: 16px; /* Adjusted size */
+}
+
+input:checked + .slider {
+  background-color: var(--switch-checked-bg);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px); /* Adjusted translation */
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+/* Title styling */
+h1 {
+  font-size: 2.5em;
+  font-weight: 700; /* Use bolder weight */
+  margin-top: 10px; /* Add some top margin */
+  margin-bottom: 30px;
+  color: var(--title-color);
+}
+
+/* Sudoku Table */
 table {
   border-collapse: collapse;
-  font-size: 2em;
-  margin: 0 auto;
+  font-size: 1.8em;
+  margin: 0 auto 30px auto;
+  background-color: var(--table-bg);
+  color: var(--table-text);
+  border: 3px solid var(--table-border);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Theme transition */
 }
 
-th, td {
-  border: solid thin;
-  height: 1.4em;
-  width: 1.4em;
+/* Table cell styling */
+td {
+  border: 1px solid var(--table-cell-border);
+  height: 1.6em;
+  width: 1.6em;
   text-align: center;
   padding: 0;
+  vertical-align: middle;
+  font-weight: 700;
+  cursor: text;
+  transition: background-color 0.2s ease, border-color 0.3s ease; /* Theme transition */
 }
 
-.buttons {
-  margin-top: 20px;
+/* Style for focused/edited cells */
+td:focus {
+  background-color: var(--table-cell-focus-bg);
+  outline: none;
 }
 
-button {
-  font-size: 1.5em;
-  margin: 10px;
-  padding: 10px 20px;
+/* Thicker borders for 3x3 blocks */
+colgroup,
+tbody {
   border: none;
-  border-radius: 5px;
-  background-color: #4CAF50;
-  color: #fff;
-  cursor: pointer;
 }
 
+/* Use variables for block borders */
+col:nth-child(3n),
+tr:nth-child(3n) td {
+  border-right-width: 3px;
+  border-right-color: var(--table-border);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--table-border);
+}
+
+table tr:last-child td {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--table-cell-border);
+}
+
+table td:last-child {
+  border-right-width: 1px;
+  border-right-color: var(--table-cell-border);
+}
+
+table col:nth-child(3n) {
+  border-right: 3px solid var(--table-border);
+}
+
+table tr:nth-child(3n) {
+  border-bottom: 3px solid var(--table-border);
+}
+
+
+/* Button container - uses flex and gap for spacing */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px; /* Increased gap for more space */
+  margin-top: 20px; /* Add some margin above buttons */
+}
+
+/* General button styling */
+button {
+  font-family: var(--font-family);
+  font-size: 1.1em;
+  font-weight: 700;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px var(--button-shadow);
+}
+
+/* Solve button specific style */
+#solve-button {
+  background-color: var(--solve-bg);
+  color: white;
+}
+
+/* Clear button specific style */
+#clear-button {
+  background-color: var(--clear-bg);
+  color: white;
+}
+
+/* Enhanced Hover effect for all buttons */
 button:hover {
-  background-color: #3e8e41;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 12px var(--button-hover-shadow);
+}
+
+/* Specific hover background colors */
+#solve-button:hover {
+  background-color: var(--solve-hover-bg);
+}
+
+#clear-button:hover {
+  background-color: var(--clear-hover-bg);
 }

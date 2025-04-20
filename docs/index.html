@@ -1,52 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sudoku Solver</title>
-  <script type="text/javascript" src="Suduku.js"></script>
+  <script type="text/javascript" src="Suduku.js" defer></script>
   
-  <style type="text/css">
-    body {
-      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
-      background-image: url('Img.jpg'); /* Replace 'background.jpg' with the path to your image */
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      color: white; /* Adjust text color for readability */
-    }
-    #container { 
-      text-align: center; 
-      background-color: rgba(0, 0, 0, 0.5); /* Optional: to add a translucent background to the container */
-      padding: 20px;
-      border-radius: 10px;
-    }
-    table { 
-      border-collapse: collapse; 
-      font-size: 2em; 
-      margin: 0 auto; 
-    }
-    colgroup, tbody { 
-      border: solid medium; 
-    }
-    td { 
-      border: solid thin; 
-      height: 1.4em; 
-      width: 1.4em; 
-      text-align: center; 
-      padding: 0; 
-    }
-    button { 
-      margin-top: 15px; 
-      font-size: 1.5em; 
-    }
-    .padd {
-      padding-bottom: 100px;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="container">
-   
-    <h1 class="padd"><em>Sudoku Solver</em></h1>
+  <!-- Starfield divs -->
+  <div id="stars1"></div>
+  <div id="stars2"></div>
+  <div id="stars3"></div>
+
+  <div id="landing-page">
+    <h1>Sudoku Solver</h1>
+    <button id="play-button" class="play-btn">Play Game</button>
+  </div>
+
+  <div id="container" class="hidden">
+    
+    <div class="top-controls">
+      <!-- Back to Home Button -->
+      <button id="back-home-button" class="back-btn">&larr; Home</button>
+      <!-- Theme Toggle Switch -->
+      <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="theme-checkbox">
+            <input type="checkbox" id="theme-checkbox" />
+            <div class="slider round"></div>
+        </label>
+        <span>Dark Mode</span>
+      </div>
+    </div>
+
+    <h1><em>Sudoku Solver</em></h1>
     <table id="sudoku-board">
       <colgroup><col><col><col></colgroup>
       <colgroup><col><col><col></colgroup>
@@ -63,15 +54,47 @@
         <tr> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td> <td contenteditable="true"></td></tr>
       </tbody>
     </table>
-    <div>
+    <div class="button-container">
       <button id="solve-button">Solve!</button>
-    </div>
-    <div>
       <button id="clear-button">Clear board</button>
     </div>
   </div>
 
   <script type="text/javascript">
+    const landingPage = document.getElementById('landing-page');
+    const gameContainer = document.getElementById('container');
+    const playButton = document.getElementById('play-button');
+    const backHomeButton = document.getElementById('back-home-button');
+
+    playButton.addEventListener('click', () => {
+      landingPage.classList.add('hidden');
+      gameContainer.classList.remove('hidden');
+    });
+
+    backHomeButton.addEventListener('click', () => {
+      gameContainer.classList.add('hidden');
+      landingPage.classList.remove('hidden');
+      clearBoard();
+    });
+
+    const themeToggle = document.getElementById('theme-checkbox');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme === 'dark') {
+      document.body.classList.add('dark-theme');
+      themeToggle.checked = true;
+    }
+
+    themeToggle.addEventListener('change', function() {
+      if(this.checked) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
     document.getElementById("sudoku-board").addEventListener("keyup", function(event) {
       if(event.target && event.target.nodeName == "TD") {
         var validNum = /[1-9]/;
@@ -97,7 +120,7 @@
     document.getElementById("clear-button").addEventListener("click", clearBoard);
 
     function clearBoard() {
-      var tds = document.getElementsByTagName("td");
+      var tds = document.querySelectorAll("#sudoku-board td");
       for (var i = 0; i < tds.length; i++) {
         tds[i].innerText = "";
       }
@@ -106,10 +129,10 @@
     function boardToString() {
       var string = "";
       var validNum = /[1-9]/;
-      var tds = document.getElementsByTagName("td");
+      var tds = document.querySelectorAll("#sudoku-board td");
       for (var i = 0; i < tds.length; i++) {
         if (validNum.test(tds[i].innerText[0])) {
-          string += tds[i].innerText;
+          string += tds[i].innerText[0];
         } else {
           string += "-";
         }
@@ -121,14 +144,44 @@
       var currentCell;
       var validNum = /[1-9]/;
       var cells = string.split("");
-      var tds = document.getElementsByTagName("td");
+      var tds = document.querySelectorAll("#sudoku-board td");
+      if (cells.length !== tds.length) return;
       for (var i = 0; i < tds.length; i++) {
-        currentCell = cells.shift();
+        currentCell = cells[i];
         if (validNum.test(currentCell)) {
           tds[i].innerText = currentCell;
+        } else {
+          tds[i].innerText = "";
         }
       }
     }
+
+    // --- Generate Stars --- 
+    function generateStars(selector, count) {
+      const starsElement = document.querySelector(selector);
+      if (!starsElement) return;
+      let boxShadow = '';
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = 2000; // Use a large height for animation range
+
+      for (let i = 0; i < count; i++) {
+        boxShadow += `${Math.random() * viewportWidth}px ${Math.random() * viewportHeight}px #FFF${i < count - 1 ? ',' : ''}`;
+      }
+      starsElement.style.boxShadow = boxShadow;
+    }
+
+    // Generate different densities for different layers
+    generateStars('#stars1', 700); 
+    generateStars('#stars2', 200);
+    generateStars('#stars3', 100);
+    
+    // Optional: Regenerate stars on window resize if needed (can be performance intensive)
+    // window.addEventListener('resize', () => {
+    //   generateStars('#stars1', 700);
+    //   generateStars('#stars2', 200);
+    //   generateStars('#stars3', 100);
+    // });
+
   </script>
 </body>
 </html>
